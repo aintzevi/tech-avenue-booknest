@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+
+        .page {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: white;
+            padding: 18px 24px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .banner {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 12px 14px;
+            margin: 14px 0;
+            font-size: 13px;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            padding: 20px 24px 32px 24px;
+        }
+
+        .book-card-a {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 35px rgba(15, 23, 42, 0.09);
+            padding: 16px 18px 18px 18px;
+        }
+
+        .book-card-b {
+            background: #111827;
+            color: #e5e7eb;
+            border-radius: 2px;
+            border: 1px solid #6b7280;
+            padding: 10px 10px 12px 10px;
+        }
+
+        .book-title-main {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .book-title-secondary {
+            font-size: 15px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .book-author {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .book-price-a {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .book-price-b {
+            margin-top: 4px;
+            font-size: 13px;
+            font-weight: 400;
+            color: #fbbf24;
+        }
+
+        .meta {
+            margin-top: 12px;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .btn-row {
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <div class="header-title">Tech Avenue Booknest</div>
+        <div class="header-subtitle">Tiny bookstore app – definitely not production ready.</div>
+    </header>
+
+    {% if show_banner %}
+    <div class="banner">
+        Deployed manually by whoever remembers how. Changes go straight to production.
+    </div>
+    {% endif %}
+
+    <section class="books-grid">
+        {% for book in books %}
+            {% if loop.index is even %}
+                <article class="book-card-a">
+                    <div class="book-title-main">{{ book.title }}</div>
+                    <div class="book-author">{{ book.author }}</div>
+                    <div class="book-price-a">{{ book.price_label }}</div>
+                    <div class="btn-row">
+                        {{ book.primary_button_html | safe }}
+                        {{ book.secondary_button_html | safe }}
+                    </div>
+                    <div class="meta">
+                        Uses payment API at {{ payment_api_url }} with key {{ payment_api_key }}.<br>
+                        DB: {{ db_user }}@{{ db_host }}:{{ db_port }}/{{ db_name }}
+                    </div>
+                </article>
+            {% else %}
+                <article class="book-card-b">
+                    <div class="book-title-secondary">{{ book.title }}</div>
+                    <div class="book-author">{{ book.author }}</div>
+                    <div class="book-price-b">{{ book.price_label }}</div>
+                    <div class="btn-row">
+                        {{ book.primary_button_html | safe }}
+                        {{ book.secondary_button_html | safe }}
+                    </div>
+                    <div class="meta">
+                        Payment endpoint: {{ payment_api_url }} · API key: {{ payment_api_key }}
+                        <br>
+                        Database host: {{ db_host }}
+                    </div>
+                </article>
+            {% endif %}
+        {% endfor %}
+    </section>
+</div>
+</body>
+</html>
+

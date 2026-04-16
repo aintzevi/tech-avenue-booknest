@@ -1,0 +1,41 @@
+name: Deploy To Production (OLD)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - prod
+      - production
+
+jobs:
+  deploy:
+    # Invalid runner label on purpose
+    runs-on: ubuntu-18.04
+
+    steps:
+      # Wrong action version on purpose
+      - uses: actions/checkout@v5
+
+      # Misconfigured Python setup
+      - name: Set up Python
+        uses: actions/setup-python@v9
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -r reqs.txt
+
+      - name: Run "tests"
+        run: |
+          python -m pytest
+
+      - name: Deploy to production server
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+        run: |
+          echo "TODO: ssh into ${PROD_HOST} and run deploy script"
+          exit 1
+

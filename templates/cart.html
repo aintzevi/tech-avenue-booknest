@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Tech Avenue BookNest</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Georgia, serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .cart-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #764ba2;
+            text-align: center;
+            border-bottom: 2px dashed #667eea;
+            padding-bottom: 15px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px dotted #ccc;
+            margin: 10px 0;
+        }
+        .item-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .item-price {
+            color: #667eea;
+            font-size: 16px;
+        }
+        .total {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #764ba2;
+        }
+        .checkout-btn {
+            background-color: white;
+            color: #764ba2;
+            border: 2px solid #764ba2;
+            padding: 12px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .checkout-btn:hover {
+            background-color: #764ba2;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-container">
+        <h1>Your Shopping Cart</h1>
+        <div class="cart-item">
+            <span class="item-name">Python Guide</span>
+            <span class="item-price">$29.99</span>
+        </div>
+        <div class="cart-item">
+            <span class="item-name">Web Dev 101</span>
+            <span class="item-price">$35.50</span>
+        </div>
+        <div class="total">
+            Total: $65.49
+        </div>
+        <button class="checkout-btn">Proceed to Checkout</button>
+    </div>
+</body>
+</html>
