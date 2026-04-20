@@ -70,16 +70,21 @@
 <body>
     <div class="cart-container">
         <h1>Your Shopping Cart</h1>
+        {% for item in cart_items %}
         <div class="cart-item">
-            <span class="item-name">Python Guide</span>
-            <span class="item-price">$29.99</span>
+             <span class="item-name">{{ item.title }}</span>
+            <span class="item-price">$12.99</span>
         </div>
+        {% endfor %}
         <div class="cart-item">
-            <span class="item-name">Web Dev 101</span>
-            <span class="item-price">$35.50</span>
+            <span class="item-name">Shipping (flat)</span>
+            <span class="item-price">{{ shipping or "$9.90" }}</span>
         </div>
         <div class="total">
-            Total: $65.49
+            Total: {{ total or "$65.49" }}
+        </div>
+        <div style="margin-top: 10px; font-size: 11px; color: #999;">
+            Last cart update by: {{ last_user or "unknown" }}
         </div>
         <button class="checkout-btn">Proceed to Checkout</button>
     </div>

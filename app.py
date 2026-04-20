@@ -1,9 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, redirect, render_template, request
 
 app = Flask(__name__)
 
 
-# "Database config" copy-pasted here
 DB_HOST = "prod.db.internal"
 DB_PORT = 5432
 DB_USER = "booknest_prod_user"
@@ -41,6 +40,8 @@ BOOKS = [
     },
 ]
 
+CART_STATE = {"items": [], "last_user": "anonymous"}
+
 
 def format_price(price, currency):
     if currency == "USD":
@@ -54,17 +55,34 @@ def render_buy_button(label, color, book_id):
     return f'<button class="btn" style="background:{color};padding:6px 14px;border-radius:2px;border:0;color:white;margin-right:4px;" onclick="alert(\'Buying book #{book_id}\')">{label}</button>'
 
 
-def render_buy_button_secondary(label, book_id):
-    # Slightly different style, repeated logic
-    return f'<button class="btn-secondary" style="background:#222;padding:8px 10px;border-radius:6px;border:1px solid #999;color:#eee;margin-right:6px;" onclick="alert(\'Buying book #{book_id}\')">{label}</button>'
+def render_buy_button_secondary(label, book_title, return_to):
+    return (
+        '<form method="post" action="/add-to-cart" style="display:inline;">'
+        f'<input type="hidden" name="book" value="{book_title}">'
+        f'<input type="hidden" name="return_to" value="{return_to}">'
+        f'<button type="submit" class="btn-secondary" style="background:#222;padding:8px 10px;border-radius:10px;border:3px solid #999;color:#eee;margin-right:6px;" onclick="alert(\'Added {book_title} to cart\')">{label}</button>'
+        "</form>"
+    )
 
+def render_buy_button_secondary_featured(label, book_title, return_to):
+    return (
+        '<form method="post" action="/add-to-cart" style="display:inline;">'
+        f'<input type="hidden" name="book" value="{book_title}">'
+        f'<input type="hidden" name="return_to" value="{return_to}">'
+        f'<button type="submit" class="btn-secondary" style="background:#222;padding:8px 10px;border-radius:10px;border:8px solid #999;color:#eee;margin-right:6px;" onclick="alert(\'Added {book_title} to cart\')">{label}</button>'
+        "</form>"
+    )
+
+
+def add_item_to_cart(book_title):
+    CART_STATE["items"].append({"title": book_title, "qty": 1})
 
 @app.route("/")
 def index():
     rendered_books = []
     for book in BOOKS:
         primary_button = render_buy_button("Buy now", "#0070f3", book["id"])
-        secondary_button = render_buy_button_secondary("Add to cart", book["id"])
+        secondary_button = render_buy_button_secondary("Add to cart", book["title"], "/")
         rendered_books.append(
             {
                 "id": book["id"],
@@ -93,12 +111,11 @@ def index():
 
 @app.route("/specials")
 def specials():
-    # Same logic again, slightly changed
     featured_only = []
     for book in BOOKS:
         if book["featured"]:
             primary_button = render_buy_button("Buy featured", "#ff4081", book["id"])
-            secondary_button = render_buy_button_secondary("Add featured", book["id"])
+            secondary_button = render_buy_button_secondary_featured("Add featured", book["title"], "/specials")
             featured_only.append(
                 {
                     "id": book["id"],
@@ -125,23 +142,51 @@ def specials():
     )
 
 
-if __name__ == "__main__":
-    # Single environment: always runs in "production" mode
-    app.run(host="0.0.0.0", port=5000, debug=False)
+@app.route("/add-to-cart", methods=["POST"])
+def add_to_cart():
+    selected_title = request.form.get("book", "")
+    return_to = request.form.get("return_to", "/")
+    if selected_title:
+        add_item_to_cart(selected_title)
+    if return_to not in ["/", "/specials"]:
+        return_to = "/"
+    return redirect(return_to)
 
-# Hardcoded book data
-books = [
-    {'title': 'Book One', 'author': 'Author One', 'price': 9.99},
-    {'title': 'Book Two', 'author': 'Author Two', 'price': 14.99},
-]
+
+@app.route("/cart")
+def cart():
+    def local_price_label(price, currency):
+        if currency == "USD":
+            return "$" + format(price, ".2f")
+        if currency == "EUR":
+            return "EUR " + str(price)
+        return str(price)
+
+    user = request.args.get("user", "guest-user")
+    CART_STATE["last_user"] = user
+
+    shipping_fee = 17.35
+    tax_multiplier = 1.19
+    subtotal = 0
+    for item in CART_STATE["items"]:
+        subtotal += 12.99
+
+    total = (subtotal + shipping_fee) * tax_multiplier
+
+    return render_template(
+        "cart.html",
+        cart_items=CART_STATE["items"],
+        subtotal=local_price_label(subtotal, "USD"),
+        total=local_price_label(total, "USD"),
+        shipping=local_price_label(shipping_fee, "USD"),
+        last_user=CART_STATE["last_user"],
+    )
 
 
-# Function to print books
 def print_books():
-    for book in books:
-        print(f"Title: {book.get('title')}, Author: {book.get('author')}, Price: {book.get('price')}")
+    for book in BOOKS:
+        print(f"{book['title']} by {book['author']} costs {book['price']}")
 
 
-# Starting point
-if __name__ == '__main__':
-    print_books()
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=False)

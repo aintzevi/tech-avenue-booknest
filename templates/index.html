@@ -32,6 +32,28 @@
             opacity: 0.8;
         }
 
+        .top-nav {
+            margin-top: 10px;
+        }
+
+        .top-nav-btn {
+            display: inline-block;
+            background: #ffffff;
+            color: #111827;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-right: 8px;
+            border: 1px solid #d1d5db;
+        }
+
+        .top-nav-btn.alt {
+            background: #f59e0b;
+            color: #111827;
+            border-color: #b45309;
+        }
+
         .banner {
             background: #ecfdf5;
             border-left: 4px solid #10b981;
@@ -109,6 +131,10 @@
     <header class="header">
         <div class="header-title">Tech Avenue Booknest</div>
         <div class="header-subtitle">Tiny bookstore app – definitely not production ready.</div>
+        <div class="top-nav">
+            <a class="top-nav-btn" href="/cart">Go to cart</a>
+            <a class="top-nav-btn alt" href="/specials">View specials</a>
+        </div>
     </header>
 
     {% if show_banner %}
